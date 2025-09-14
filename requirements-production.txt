@@ -1,0 +1,42 @@
+# VibeCodeAuditor Production Requirements
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Database & Authentication
+supabase==2.0.2
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# File Handling
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# HTTP & Async
+httpx==0.25.2
+asyncio-mqtt==0.13.0
+
+# Security Scanners
+bandit[toml]==1.7.5
+safety==2.3.5
+semgrep==1.45.0
+
+# Utilities
+pyyaml==6.0.1
+python-dotenv==1.0.0
+click==8.1.7
+
+# Logging & Monitoring
+structlog==23.2.0
+prometheus-client==0.19.0
+
+# Production Server
+gunicorn==21.2.0
+
+# Development (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0

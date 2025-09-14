@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # VibeCodeAuditor Backend API
+  vibeauditor-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,https://yourdomain.com}
+      - MAX_FILE_SIZE=10485760  # 10MB
+      - RATE_LIMIT_PER_MINUTE=60
+      - ENABLED_SCANNERS=bandit,semgrep,custom_rules
+      - MAX_CONCURRENT_SCANS=5
+      - STORAGE_TYPE=local
+      - STORAGE_LOCAL_PATH=/app/uploads
+      - STORAGE_RETENTION_DAYS=30
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - vibeauditor-network
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - vibeauditor-network
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+      - ./webapp/build:/usr/share/nginx/html
+    depends_on:
+      - vibeauditor-api
+    restart: unless-stopped
+    networks:
+      - vibeauditor-network
+
+  # PostgreSQL database (optional - you can use Supabase instead)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=vibeauditor
+      - POSTGRES_USER=${POSTGRES_USER:-vibeauditor}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - vibeauditor-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  vibeauditor-network:
+    driver: bridge

@@ -1,0 +1,45 @@
+# VibeCodeAuditor Configuration
+
+# Scanning options
+min_severity: "medium"
+enabled_rules: []  # Empty means all rules enabled
+disabled_rules: []
+exclude_patterns:
+  - "*.pyc"
+  - "__pycache__"
+  - ".git"
+  - "node_modules"
+  - ".venv"
+  - "venv"
+  - "*.log"
+include_patterns:
+  - "*.py"
+  - "*.js"
+  - "*.ts"
+  - "*.jsx"
+  - "*.tsx"
+  - "*.java"
+  - "*.go"
+  - "*.rs"
+  - "*.cpp"
+  - "*.c"
+
+# Language-specific settings
+python_settings:
+  max_function_length: 50
+  max_complexity: 10
+  require_docstrings: true
+
+javascript_settings:
+  check_console_logs: true
+  require_strict_mode: false
+
+# AI/ML specific settings
+check_data_privacy: true
+check_model_security: true
+check_bias_detection: true
+
+# Report settings
+max_issues_per_file: 50
+include_code_snippets: true
+show_remediation: true
