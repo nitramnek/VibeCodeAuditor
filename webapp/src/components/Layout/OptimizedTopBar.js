@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Shield, 
-  Menu, 
-  Search, 
-  Bell, 
-  Settings, 
-  User, 
-  LogOut, 
+import {
+  Shield,
+  Menu,
+  Search,
+  Bell,
+  Settings,
+  User,
+  LogOut,
   ChevronDown,
   Sun,
   Moon,
@@ -17,15 +17,13 @@ import {
   Clock,
   AlertTriangle,
   CheckCircle,
-  Filter,
   Zap,
   HelpCircle,
   Bookmark,
-  History,
   ArrowRight,
   Wifi,
   WifiOff,
-  LayoutDashboard   
+  LayoutDashboard
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 

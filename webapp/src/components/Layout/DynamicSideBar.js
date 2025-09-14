@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Shield, 
-  FileSearch, 
-  BarChart3, 
-  Settings, 
-  BookOpen, 
-  History, 
-  Users, 
+import {
+  LayoutDashboard,
+  Shield,
+  FileSearch,
+  BarChart3,
+  BookOpen,
+  History,
+  Users,
   Database,
   Globe,
   ChevronLeft,

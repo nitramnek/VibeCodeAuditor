@@ -7,27 +7,17 @@ import {
   XCircle,
   FileText,
   Calendar,
-  TrendingUp,
-  Users,
-  Lock,
   Eye,
   Download,
   Settings,
   BarChart3,
   Clock,
   Target,
-  Award,
   AlertCircle,
-  CheckSquare,
   BookOpen,
   Activity,
-  RefreshCw,
-  Plus,
   X,
-  Save,
-  Bell,
-  Zap,
-  Globe
+  Save
 } from 'lucide-react';
 
 const Compliance = () => {
