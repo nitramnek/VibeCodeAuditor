@@ -189,7 +189,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       subscription.unsubscribe()
     }
-  }, [isSupabaseEnabled, fetchUserProfile])
+  }, [isSupabaseEnabled, fetchUserProfile, createUserProfile])
 
 
 

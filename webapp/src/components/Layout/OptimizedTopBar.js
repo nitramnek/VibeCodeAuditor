@@ -27,6 +27,16 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Mock data for realistic experience - moved outside component for stability
+const searchSuggestions = [
+  { type: 'recent', title: 'SQL injection vulnerabilities', subtitle: 'in authentication module', icon: Search },
+  { type: 'recent', title: 'OWASP Top 10 compliance', subtitle: 'security standards', icon: Search },
+  { type: 'recent', title: 'Critical security issues', subtitle: 'last 30 days', icon: Search },
+  { type: 'shortcut', title: 'New Security Scan', subtitle: 'Ctrl+N', icon: Zap },
+  { type: 'shortcut', title: 'View Dashboard', subtitle: 'Ctrl+D', icon: LayoutDashboard },
+  { type: 'shortcut', title: 'Compliance Report', subtitle: 'Ctrl+R', icon: Shield }
+];
+
 const OptimizedTopBar = ({ onMenuClick, isMobile, sidebarState }) => {
   // State management
   const [searchOpen, setSearchOpen] = useState(false);

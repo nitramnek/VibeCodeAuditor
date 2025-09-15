@@ -111,7 +111,7 @@ const Results = () => {
     };
 
     if (scanId) fetchResults();
-  }, [scanId]);
+  }, [scanId, fallbackIssues]);
 
   if (loading) {
     return <div className="p-6">Loading results...</div>;

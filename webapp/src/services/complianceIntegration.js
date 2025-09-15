@@ -246,6 +246,9 @@ export class ComplianceIntegrationService {
       case 'pci_dss':
         description += `**PCI DSS Relevance:** This vulnerability may affect cardholder data security and PCI DSS compliance requirements.\n\n`
         break
+      default:
+        description += `**Compliance Relevance:** This security issue may impact ${framework.name} compliance requirements.\n\n`
+        break
     }
 
     if (issue.recommendation) {
