@@ -64,55 +64,46 @@ const OptimizedTopBar = ({ onMenuClick, isMobile, sidebarState }) => {
 
   // Mock data for realistic experience
   const notifications = [
-    { 
-      id: 1, 
-      title: 'Critical vulnerability detected', 
-      message: 'SQL injection found in user authentication module', 
-      time: '2 min ago', 
+    {
+      id: 1,
+      title: 'Critical vulnerability detected',
+      message: 'SQL injection found in user authentication module',
+      time: '2 min ago',
       unread: true,
       type: 'critical',
       icon: AlertTriangle,
       color: 'text-red-600 bg-red-100'
     },
-    { 
-      id: 2, 
-      title: 'Scan completed successfully', 
-      message: 'Security scan for project "E-commerce API" finished', 
-      time: '15 min ago', 
+    {
+      id: 2,
+      title: 'Scan completed successfully',
+      message: 'Security scan for project "E-commerce API" finished',
+      time: '15 min ago',
       unread: true,
       type: 'success',
       icon: CheckCircle,
       color: 'text-green-600 bg-green-100'
     },
-    { 
-      id: 3, 
-      title: 'Compliance report ready', 
-      message: 'ISO 27001 compliance report is available for download', 
-      time: '1 hour ago', 
+    {
+      id: 3,
+      title: 'Compliance report ready',
+      message: 'ISO 27001 compliance report is available for download',
+      time: '1 hour ago',
       unread: false,
       type: 'info',
       icon: Shield,
       color: 'text-blue-600 bg-blue-100'
     },
-    { 
-      id: 4, 
-      title: 'Team member added', 
-      message: 'Sarah Johnson joined your security team', 
-      time: '3 hours ago', 
+    {
+      id: 4,
+      title: 'Team member added',
+      message: 'Sarah Johnson joined your security team',
+      time: '3 hours ago',
       unread: false,
       type: 'info',
       icon: User,
       color: 'text-purple-600 bg-purple-100'
     }
-  ];
-
-  const searchSuggestions = [
-    { type: 'recent', title: 'SQL injection vulnerabilities', subtitle: 'in authentication module', icon: Search },
-    { type: 'recent', title: 'OWASP Top 10 compliance', subtitle: 'security standards', icon: Search },
-    { type: 'recent', title: 'Critical security issues', subtitle: 'last 30 days', icon: Search },
-    { type: 'shortcut', title: 'New Security Scan', subtitle: 'Ctrl+N', icon: Zap },
-    { type: 'shortcut', title: 'View Dashboard', subtitle: 'Ctrl+D', icon: LayoutDashboard },
-    { type: 'shortcut', title: 'Compliance Report', subtitle: 'Ctrl+R', icon: Shield }
   ];
 
   const unreadCount = notifications.filter(n => n.unread).length;
@@ -153,17 +144,17 @@ const OptimizedTopBar = ({ onMenuClick, isMobile, sidebarState }) => {
     }
 
     setSearchLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
-      const filtered = searchSuggestions.filter(item => 
+      const filtered = searchSuggestions.filter(item =>
         item.title.toLowerCase().includes(query.toLowerCase()) ||
         item.subtitle.toLowerCase().includes(query.toLowerCase())
       );
       setSearchResults(filtered);
       setSearchLoading(false);
     }, 300);
-  }, [searchSuggestions]);
+  }, []);
 
   // Debounced search
   useEffect(() => {

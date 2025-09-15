@@ -1,11 +1,8 @@
 import React, { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
 import { useScan } from '../hooks/useScan'
 import { Upload, FileText, Shield, BarChart3, Settings, Info, Clock, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react'
 
 const Dashboard = () => {
-  const navigate = useNavigate()
   const [dragActive, setDragActive] = useState(false)
   const { loading, performScan } = useScan()
 

@@ -110,7 +110,7 @@ const Results = () => {
     };
 
     if (scanId) fetchResults();
-  }, [scanId]);
+  }, [scanId, location.state?.fallbackIssues]);
 
   if (loading) {
     return <div className="p-6">Loading results...</div>;

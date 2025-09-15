@@ -8,7 +8,7 @@ import Results from './pages/Results';
 import ScanResults from './pages/ScanResults';
 import Compliance from './pages/Compliance';
 import Dashboard from './pages/Dashboard';
-import Analytics from './pages/Analytics';
+
 import Scanner from './pages/Scanner';
 import LoginForm from './components/Auth/LoginForm';
 import SignupForm from './components/Auth/SignupForm';
@@ -79,14 +79,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route 
-                path="/analytics" 
-                element={
-                  <ProtectedRoute>
-                    <Analytics />
-                  </ProtectedRoute>
-                } 
-              />
+
               <Route 
                 path="/history" 
                 element={
