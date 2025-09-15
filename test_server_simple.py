@@ -13,7 +13,7 @@ sys.path.insert(0, str(current_dir))
 print("Testing server startup...")
 
 try:
-    from vibeauditor.main import app
+    from main import app
     print("✅ App imported successfully")
     
     import uvicorn

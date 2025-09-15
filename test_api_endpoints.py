@@ -14,7 +14,7 @@ def test_imports():
     """Test that all imports work correctly"""
     try:
         print("Testing imports...")
-        from vibeauditor.main import app
+        from main import app
         print("✅ Main app imported successfully")
         
         from vibeauditor.core.supabase_client import get_supabase_client
@@ -34,7 +34,7 @@ def test_endpoints():
     """Test API endpoints"""
     try:
         from fastapi.testclient import TestClient
-        from vibeauditor.main import app
+        from main import app
         
         client = TestClient(app)
         
