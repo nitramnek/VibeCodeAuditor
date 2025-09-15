@@ -30,7 +30,13 @@ const createMockClient = () => ({
     upsert: () => Promise.resolve({ data: null, error: { message: 'Database not configured' } }),
     update: () => Promise.resolve({ data: null, error: { message: 'Database not configured' } }),
     delete: () => Promise.resolve({ data: null, error: { message: 'Database not configured' } })
-  })
+  }),
+  channel: () => ({
+    on: () => ({
+      subscribe: () => ({})
+    })
+  }),
+  removeChannel: () => {}
 })
 
 if (!supabaseUrl || !supabaseAnonKey) {
