@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { Shield, AlertTriangle, CheckCircle, Clock, TrendingUp } from 'lucide-react'
+import { Shield, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react'
 import { useCompliance } from '../hooks/useCompliance'
 
 const ComplianceDashboardWidget = () => {

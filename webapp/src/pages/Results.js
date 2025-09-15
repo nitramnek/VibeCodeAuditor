@@ -16,11 +16,10 @@ const Results = () => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
-  // Get fallback data from navigation state
-  const fallbackIssues = location.state?.fallbackIssues || [];
 
   useEffect(() => {
+    // Get fallback data from navigation state
+    const fallbackIssues = location.state?.fallbackIssues || [];
     const fetchResults = async () => {
       setLoading(true);
       try {
@@ -111,7 +110,7 @@ const Results = () => {
     };
 
     if (scanId) fetchResults();
-  }, [scanId, fallbackIssues]);
+  }, [scanId]);
 
   if (loading) {
     return <div className="p-6">Loading results...</div>;

@@ -1,12 +1,10 @@
 // webapp/src/pages/Scanner.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Upload, FileText, Shield, CheckCircle } from 'lucide-react';
 import { useScan } from '../hooks/useScan';
 
 const Scanner = () => {
   const [dragActive, setDragActive] = useState(false);
-  const navigate = useNavigate();
   const { loading, performScan } = useScan();
 
   const handleDrag = (e) => {

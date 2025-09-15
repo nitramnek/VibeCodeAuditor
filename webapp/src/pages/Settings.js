@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { Save, RefreshCw, AlertCircle } from 'lucide-react';
+import { Save, RefreshCw } from 'lucide-react';
 import { getDefaultConfig } from '../services/api';
 
 const Settings = () => {

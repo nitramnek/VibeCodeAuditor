@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 
 const Compliance = () => {
-  const { complianceData, loading, error, refetch, updateFramework } = useCompliance();
+  const { complianceData, loading, updateFramework } = useCompliance();
   const [activeTab, setActiveTab] = useState('overview');
   const [configModal, setConfigModal] = useState({ isOpen: false, framework: null });
   const [configForm, setConfigForm] = useState({

@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import OptimizedTopBar from './OptimizedTopBar';
 import DynamicSideBar from './DynamicSideBar';
 import MobileSideBar from './MobileSideBar';
-import { useAuth } from '../../contexts/AuthContext';
 
 const DynamicLayout = ({ children }) => {
   const [sidebarState, setSidebarState] = useState('expanded'); // expanded, collapsed, hidden, mobile
