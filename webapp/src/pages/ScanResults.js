@@ -3,17 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import {
   FileText,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
   Eye,
   Calendar,
   Shield,
   Search,
   Filter,
   X,
-  SortAsc,
-  SortDesc
+  SortAsc
 } from 'lucide-react';
 
 const ScanResults = () => {
@@ -98,15 +94,7 @@ const ScanResults = () => {
     setSortBy('newest');
   };
 
-  const getSeverityColor = (severity) => {
-    switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+
 
   const getStatusColor = (status) => {
     switch (status) {

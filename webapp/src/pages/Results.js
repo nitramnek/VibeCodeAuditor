@@ -19,7 +19,6 @@ const Results = () => {
   
   // Get fallback data from navigation state
   const fallbackIssues = location.state?.fallbackIssues || [];
-  const fallbackScanData = location.state?.scanData;
 
   useEffect(() => {
     const fetchResults = async () => {
