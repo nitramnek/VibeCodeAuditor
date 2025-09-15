@@ -3,7 +3,7 @@
  * Handles auth state, profiles, and role-based access using Supabase.
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 const AuthContext = createContext({
@@ -35,58 +35,43 @@ export const AuthProvider = ({ children }) => {
 
   const isSupabaseEnabled = isSupabaseConfigured()
 
-  useEffect(() => {
-    if (!isSupabaseEnabled) {
-      setLoading(false)
-      return
-    }
+  const createUserProfile = useCallback(async (userId) => {
+    try {
+      console.log('Creating profile for user ID:', userId);
 
-    const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        if (error) {
-          console.error('Error getting session:', error)
-        } else {
-          setUser(session?.user ?? null)
-          if (session?.user) {
-            await fetchUserProfile(session.user.id)
-          }
-        }
-      } catch (err) {
-        console.error('Error in getInitialSession:', err)
-      } finally {
-        setLoading(false)
+      // Get user info from auth
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.error('Error getting user info:', userError);
+        return;
       }
-    }
 
-    getInitialSession()
+      const user = userData.user;
+      const profileData = {
+        user_id: userId,
+        username: user.email,
+        full_name: user.user_metadata?.full_name || user.email,
+        organization: user.user_metadata?.organization || '',
+        role_id: 'ac4c17be-fdb2-4e45-bcc4-96fe27b3be64', // Default to user role
+        settings: {}
+      };
 
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email)
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          console.log('Fetching profile for user:', session.user.id)
-          await fetchUserProfile(session.user.id)
-          console.log('Profile fetch completed')
-        } else {
-          setProfile(null)
-        }
-        console.log('Setting loading to false')
-        setLoading(false)
+      const { error: createError } = await supabase
+        .from('profiles')
+        .insert(profileData);
+
+      if (createError) {
+        console.error('Error creating profile:', createError);
+      } else {
+        console.log('Profile created successfully');
       }
-    )
-
-    return () => {
-      subscription.unsubscribe()
+    } catch (err) {
+      console.error('Error in createUserProfile:', err);
     }
-  }, [isSupabaseEnabled, fetchUserProfile])
+  }, [])
 
-  /**
-   * Fetch profile including role information
-   */
-  const fetchUserProfile = async (userId) => {
+  const fetchUserProfile = useCallback(async (userId) => {
     try {
       console.log('Fetching profile for user ID:', userId);
 
@@ -156,46 +141,58 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Error in fetchUserProfile:', err)
     }
-  }
+  }, [createUserProfile])
 
-  /**
-   * Create user profile if it doesn't exist
-   */
-  const createUserProfile = async (userId) => {
-    try {
-      console.log('Creating profile for user ID:', userId);
-      
-      // Get user info from auth
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) {
-        console.error('Error getting user info:', userError);
-        return;
-      }
-      
-      const user = userData.user;
-      const profileData = {
-        user_id: userId,
-        username: user.email,
-        full_name: user.user_metadata?.full_name || user.email,
-        organization: user.user_metadata?.organization || '',
-        role_id: 'ac4c17be-fdb2-4e45-bcc4-96fe27b3be64', // Default to user role
-        settings: {}
-      };
-      
-      const { error: createError } = await supabase
-        .from('profiles')
-        .insert(profileData);
-        
-      if (createError) {
-        console.error('Error creating profile:', createError);
-      } else {
-        console.log('Profile created successfully');
-      }
-    } catch (err) {
-      console.error('Error in createUserProfile:', err);
+  useEffect(() => {
+    if (!isSupabaseEnabled) {
+      setLoading(false)
+      return
     }
-  }
+
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) {
+          console.error('Error getting session:', error)
+        } else {
+          setUser(session?.user ?? null)
+          if (session?.user) {
+            await fetchUserProfile(session.user.id)
+          }
+        }
+      } catch (err) {
+        console.error('Error in getInitialSession:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getInitialSession()
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email)
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          console.log('Fetching profile for user:', session.user.id)
+          await fetchUserProfile(session.user.id)
+          console.log('Profile fetch completed')
+        } else {
+          setProfile(null)
+        }
+        console.log('Setting loading to false')
+        setLoading(false)
+      }
+    )
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [isSupabaseEnabled, fetchUserProfile])
+
+
+
 
   const signIn = async (email, password) => {
     if (!isSupabaseEnabled) {
