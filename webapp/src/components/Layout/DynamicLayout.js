@@ -11,7 +11,6 @@ const DynamicLayout = ({ children }) => {
   const [isTablet, setIsTablet] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { } = useAuth();
 
   // Responsive breakpoints
   const MOBILE_BREAKPOINT = 768;

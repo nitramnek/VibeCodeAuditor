@@ -153,7 +153,7 @@ const OptimizedTopBar = ({ onMenuClick, isMobile, sidebarState }) => {
       setSearchResults(filtered);
       setSearchLoading(false);
     }, 300);
-  }, []);
+  }, [searchSuggestions]);
 
   // Debounced search
   useEffect(() => {

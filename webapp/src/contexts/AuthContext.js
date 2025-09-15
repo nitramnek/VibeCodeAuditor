@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       subscription.unsubscribe()
     }
-  }, [isSupabaseEnabled])
+  }, [isSupabaseEnabled, fetchUserProfile])
 
   /**
    * Fetch profile including role information
