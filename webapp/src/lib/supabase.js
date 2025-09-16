@@ -4,8 +4,8 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.VITE_SUPABASE_URL
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase credentials not found. Authentication features will be disabled.')
@@ -17,7 +17,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabase
 // Database type definitions for TypeScript support
 export const Tables = {
   PROFILES: 'profiles',
-  ORGANIZATIONS: 'organizations', 
+  ORGANIZATIONS: 'organizations',
   SCANS: 'scans',
   ISSUES: 'issues',
   COMPLIANCE_FRAMEWORKS: 'compliance_frameworks',
