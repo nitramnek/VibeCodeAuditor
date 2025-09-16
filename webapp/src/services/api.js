@@ -4,7 +4,7 @@
 
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8000'
+const API_BASE = process.env.REACT_APP_API_URL || 'https://vibecodeauditor.onrender.com'
 
 // Get auth token for API requests
 const getAuthToken = async () => {

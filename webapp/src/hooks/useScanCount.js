@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export const useScanCount = () => {
   const [scanCount, setScanCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      setScanCount(0);
+      setLoading(false);
+      return;
+    }
+
     const fetchScanCount = async () => {
       try {
         const {
