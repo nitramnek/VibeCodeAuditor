@@ -18,7 +18,7 @@ def main():
     try:
         # Test imports first
         print("🧪 Testing imports...")
-        from main import app
+        from vibeauditor.main import app
         print("✅ All imports successful")
         
         # Start server with uvicorn directly
