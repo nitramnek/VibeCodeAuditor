@@ -165,6 +165,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             detail="Could not validate credentials"
         )
 
+# Root endpoint to avoid 404 on /
+@app.get("/")
+async def root():
+    return {"message": "Welcome to VibeCodeAuditor API. Visit /docs for API documentation."}
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
