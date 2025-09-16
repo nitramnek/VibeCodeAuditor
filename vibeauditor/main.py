@@ -32,6 +32,9 @@ from vibeauditor.scanners.real_security_scanner import SecurityScanner
 from vibeauditor.core.supabase_client import get_supabase_client
 
 # Configure logging
+# Ensure logs directory exists before configuring file handler
+os.makedirs("logs", exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -51,10 +54,10 @@ supabase = None
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     global security_scanner, supabase
-    
+
     # Startup
     logger.info("Starting VibeCodeAuditor...")
-    
+
     # Initialize Supabase client
     try:
         supabase = get_supabase_client()
@@ -62,7 +65,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"❌ Failed to initialize Supabase: {e}")
         raise
-    
+
     # Initialize security scanner
     try:
         security_scanner = SecurityScanner()
@@ -70,16 +73,16 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"❌ Failed to initialize security scanner: {e}")
         raise
-    
+
     # Create necessary directories
     os.makedirs(config.storage.local_path, exist_ok=True)
     os.makedirs(config.scanner.temp_dir or "/tmp/vibeauditor", exist_ok=True)
     os.makedirs("logs", exist_ok=True)
-    
+
     logger.info("🚀 VibeCodeAuditor started successfully")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down VibeCodeAuditor...")
 
@@ -144,17 +147,17 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         # In a real implementation, you'd validate the JWT token here
         # For now, we'll extract user_id from the token payload
         token = credentials.credentials
-        
+
         # Simple validation - in production, use proper JWT validation
         if not token or len(token) < 10:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication token"
             )
-        
+
         # Mock user extraction - replace with actual JWT decoding
         return {"user_id": "authenticated_user", "email": "user@example.com"}
-        
+
     except Exception as e:
         logger.error(f"Authentication error: {e}")
         raise HTTPException(
@@ -188,7 +191,7 @@ async def upload_and_scan(
                 status_code=400,
                 detail=f"File type {file_ext} not supported"
             )
-        
+
         # Validate file size
         content = await file.read()
         if len(content) > config.security.max_file_size:
@@ -196,15 +199,15 @@ async def upload_and_scan(
                 status_code=400,
                 detail="File size exceeds maximum allowed size"
             )
-        
+
         # Save uploaded file
         upload_dir = Path(config.storage.local_path)
         upload_dir.mkdir(exist_ok=True)
-        
+
         file_path = upload_dir / f"{user_id}_{file.filename}"
         with open(file_path, "wb") as f:
             f.write(content)
-        
+
         # Create scan record in database
         scan_data = {
             "user_id": user_id,
@@ -214,17 +217,17 @@ async def upload_and_scan(
             "file_count": 1,
             "config": {"file_path": str(file_path), "file_size": len(content)}
         }
-        
+
         result = supabase.table("scans").insert(scan_data).execute()
         scan_id = result.data[0]["id"]
-        
+
         # Perform immediate scanning for better UX
         logger.info(f"Starting immediate scan for {scan_id}")
-        
+
         # Perform the scan synchronously
         scan_results = await security_scanner.scan_file(str(file_path))
         logger.info(f"Scan completed, found {len(scan_results.get('issues', []))} issues")
-        
+
         # Store issues in database
         issues_data = []
         for issue in scan_results.get("issues", []):
@@ -240,12 +243,12 @@ async def upload_and_scan(
                 "remediation": issue.get("recommendation", issue.get("remediation", ""))
             }
             issues_data.append(issue_data)
-        
+
         if issues_data:
             logger.info(f"Inserting {len(issues_data)} issues into database")
             supabase.table("issues").insert(issues_data).execute()
-        
-        # Update scan status to completed
+
+        # Update scan status to completed (handle updated_at error)
         try:
             supabase.table("scans").update({
                 "status": "completed",
@@ -253,9 +256,16 @@ async def upload_and_scan(
             }).eq("id", scan_id).execute()
         except Exception as update_error:
             logger.warning(f"Could not update scan status: {update_error}")
-        
+            # Try a simpler update without total_issues
+            try:
+                supabase.table("scans").update({"status": "completed"}).eq("id", scan_id).execute()
+                logger.info(f"✅ Scan status updated to completed (simple)")
+            except Exception as simple_error:
+                logger.error(f"Failed simple status update: {simple_error}")
+                # Issues are still saved, this is not critical for functionality
+
         logger.info(f"Completed scan {scan_id} with {len(issues_data)} issues found")
-        
+
         # Return response with issues (like mock server)
         return {
             "scan_id": scan_id,
@@ -285,7 +295,7 @@ async def upload_and_scan(
             "compliance_summary": {},
             "detected_frameworks": {}
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -299,20 +309,20 @@ async def perform_scan(scan_id: str, file_path: Path, user_id: str):
     """Perform security scanning asynchronously."""
     try:
         logger.info(f"Starting scan process for {scan_id}")
-        
+
         # Skip the status update that's causing issues for now
         # supabase.table("scans").update({"status": "running"}).eq("id", scan_id).execute()
-        
+
         # Perform the actual scan
         logger.info(f"Running security scan on {file_path}")
         logger.info(f"File exists: {file_path.exists()}")
         logger.info(f"File size: {file_path.stat().st_size if file_path.exists() else 'N/A'}")
-        
+
         scan_results = await security_scanner.scan_file(str(file_path))
         logger.info(f"Scan results type: {type(scan_results)}")
         logger.info(f"Scan results keys: {list(scan_results.keys()) if isinstance(scan_results, dict) else 'Not a dict'}")
         logger.info(f"Scan completed, found {len(scan_results.get('issues', []))} issues")
-        
+
         # Store issues in database
         issues_data = []
         for issue in scan_results.get("issues", []):
@@ -328,11 +338,11 @@ async def perform_scan(scan_id: str, file_path: Path, user_id: str):
                 "remediation": issue.get("recommendation", issue.get("remediation", ""))
             }
             issues_data.append(issue_data)
-        
+
         if issues_data:
             logger.info(f"Inserting {len(issues_data)} issues into database")
             supabase.table("issues").insert(issues_data).execute()
-        
+
         # Update scan status to completed (handle updated_at error)
         try:
             supabase.table("scans").update({
@@ -349,14 +359,14 @@ async def perform_scan(scan_id: str, file_path: Path, user_id: str):
             except Exception as simple_error:
                 logger.error(f"Failed simple status update: {simple_error}")
                 # Issues are still saved, this is not critical for functionality
-        
+
         logger.info(f"Completed scan {scan_id} with {len(issues_data)} issues found")
-        
+
     except Exception as e:
         logger.error(f"Scan error for {scan_id}: {e}")
         import traceback
         logger.error(f"Full traceback: {traceback.format_exc()}")
-        
+
         # Update scan status to failed (simple update)
         try:
             supabase.table("scans").update({
@@ -375,15 +385,15 @@ async def get_scan_results(
     try:
         # Get scan info
         scan_result = supabase.table("scans").select("*").eq("id", scan_id).execute()
-        
+
         if not scan_result.data:
             raise HTTPException(status_code=404, detail="Scan not found")
-        
+
         scan = scan_result.data[0]
-        
+
         # Get issues
         issues_result = supabase.table("issues").select("*").eq("scan_id", scan_id).execute()
-        
+
         issues = [
             IssueResponse(
                 id=issue["id"],
@@ -398,26 +408,26 @@ async def get_scan_results(
             )
             for issue in issues_result.data
         ]
-        
+
         # Create summary
         severity_counts = {}
         for issue in issues:
             severity_counts[issue.severity] = severity_counts.get(issue.severity, 0) + 1
-        
+
         summary = {
             "total_issues": len(issues),
             "severity_breakdown": severity_counts,
             "scan_duration": None,  # Calculate if needed
             "file_name": scan["name"]  # Use 'name' instead of 'filename'
         }
-        
+
         return ScanResultResponse(
             scan_id=scan_id,
             status=scan["status"],
             issues=issues,
             summary=summary
         )
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -435,9 +445,9 @@ async def list_user_scans(
     """List all scans for a user."""
     try:
         result = supabase.table("scans").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
-        
+
         return {"scans": result.data}
-        
+
     except Exception as e:
         logger.error(f"Error listing scans: {e}")
         raise HTTPException(
